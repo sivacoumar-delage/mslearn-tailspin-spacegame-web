@@ -5,6 +5,7 @@ parameters:
   stageCondition: succeeded()
   previousStage: 'Build'
 
+stages:
 - stage: '$(stageName)'
   displayName: '$(stageName)'
   dependsOn: $(previousStage)
