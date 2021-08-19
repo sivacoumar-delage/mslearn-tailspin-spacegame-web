@@ -9,7 +9,7 @@ stages:
 - stage: '$(stageName)'
   displayName: '$(stageName)'
   dependsOn: '$(previousStage)'
-  condition: '$(stageCondition)'
+  #condition: '$(stageCondition)'
   jobs:
   - deployment: Deploy
     pool:
