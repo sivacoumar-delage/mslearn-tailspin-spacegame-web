@@ -95,12 +95,12 @@ stages:
 - stage: 'Dev'
   displayName: 'Dev'
   dependsOn: 'Build'
-  # condition: |
-  #   and
-  #   (
-  #     succeeded(),
-  #     eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
-  #   )
+  condition: |
+    and
+    (
+      succeeded(),
+      eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
+    )
   jobs:
   - template: templates/deploy.yml
     parameters:
