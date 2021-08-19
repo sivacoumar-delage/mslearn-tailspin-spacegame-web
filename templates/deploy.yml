@@ -7,7 +7,7 @@ jobs:
 - deployment: Deploy
   pool:
     vmImage: 'ubuntu-20.04'
-  environment: '$(environmentName)'
+  environment: '${{ parameters.environmentName }}'
   variables:
   - group: 'Release'
   strategy:
@@ -20,5 +20,5 @@ jobs:
           displayName: 'Azure App Service Deploy: website'
           inputs:
             azureSubscription: 'Resource Manager - Tailspin - Space Game'
-            appName: '$(WebAppName-$(environmentName))'
+            appName: '$(WebAppName-${{ parameters.environmentName }})'
             package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/Tailspin.SpaceGame.Web.zip'
