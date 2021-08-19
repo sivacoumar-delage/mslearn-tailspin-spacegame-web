@@ -8,13 +8,13 @@ parameters:
 stages:
 - stage: '$(stageName)'
   displayName: '$(stageName)'
-  dependsOn: $(previousStage)
-  condition: $(stageCondition)
+  dependsOn: '$(previousStage)'
+  condition: '$(stageCondition)'
   jobs:
   - deployment: Deploy
     pool:
       vmImage: 'ubuntu-20.04'
-    environment: $(environmentName)
+    environment: '$(environmentName)'
     variables:
     - group: 'Release'
     strategy:
