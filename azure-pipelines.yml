@@ -102,7 +102,7 @@ stages:
       succeeded(),
       or
       (
-        eq(variables['Build.SourceBranchName'], 'variables['mainBranchName']'),
+        eq(variables['Build.SourceBranchName'], variables['mainBranchName']),
         eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
       )
     )
