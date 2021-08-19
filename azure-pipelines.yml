@@ -92,102 +92,135 @@ stages:
       displayName: 'Publish Artifact: drop'
       condition: succeeded()
 
+- template: templates/deploy.yml
+  parameters:
+    buildConfiguration: 'Release'  
+    environmentName: 'dev'
+    stageName: 'Dev'
+    stageCondition: |
+      and
+      (
+        succeeded(),
+        eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
+      )
+    previousStage: 'Build'
 
-- stage: 'Dev'
-  displayName: 'Dev'
-  dependsOn: Build
-  condition: |
-    and
-    (
-      succeeded(),
-      eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
-    )
-  jobs:
-  - deployment: Deploy
-    pool:
-      vmImage: 'ubuntu-20.04'
-    environment: dev
-    variables:
-    - group: Release
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - download: current
-            artifact: drop
-          - task: AzureWebApp@1
-            displayName: 'Azure App Service Deploy: website'
-            inputs:
-              azureSubscription: 'Resource Manager - Tailspin - Space Game'
-              appName: '$(WebAppName-dev)'
-              package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/Tailspin.SpaceGame.Web.zip'
+- template: templates/deploy.yml
+  parameters:
+    buildConfiguration: 'Release'  
+    environmentName: 'test'
+    stageName: 'Test'
+    previousStage: 'Dev'
 
-- stage: 'Test'
-  displayName: 'Test'
-  dependsOn: Dev
-  #condition: eq(variables['Build.Reason'], 'Schedule')
-  jobs:
-  - deployment: Deploy
-    pool:
-      vmImage: 'ubuntu-20.04'
-    environment: test
-    variables:
-    - group: 'Release'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - download: current
-            artifact: drop
-          - task: AzureWebApp@1
-            displayName: 'Azure App Service Deploy: website'
-            inputs:
-              azureSubscription: 'Resource Manager - Tailspin - Space Game'
-              appName: '$(WebAppName-test)'
-              package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/Tailspin.SpaceGame.Web.zip'
+- template: templates/deploy.yml
+  parameters:
+    buildConfiguration: 'Release'  
+    environmentName: 'staging'
+    stageName: 'Staging'
+    previousStage: 'Test'
 
-- stage: 'Staging'
-  displayName: 'Staging'
-  dependsOn: Test
-  jobs:
-  - deployment: Deploy
-    pool:
-      vmImage: 'ubuntu-20.04'
-    environment: staging
-    variables:
-    - group: 'Release'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - download: current
-            artifact: drop
-          - task: AzureWebApp@1
-            displayName: 'Azure App Service Deploy: website'
-            inputs:
-              azureSubscription: 'Resource Manager - Tailspin - Space Game'
-              appName: '$(WebAppName-staging)'
-              package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/Tailspin.SpaceGame.Web.zip'
+- template: templates/deploy.yml
+  parameters:
+    buildConfiguration: 'Release'  
+    environmentName: 'prod'
+    stageName: 'Prod'
+    previousStage: 'Staging'
 
-- stage: 'Prod'
-  displayName: 'Prod'
-  dependsOn: Staging
-  jobs:
-  - deployment: Deploy
-    pool:
-      vmImage: 'ubuntu-20.04'
-    environment: prod
-    variables:
-    - group: 'Release'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - download: current
-            artifact: drop
-          - task: AzureWebApp@1
-            displayName: 'Azure App Service Deploy: website'
-            inputs:
-              azureSubscription: 'Resource Manager - Tailspin - Space Game'
-              appName: '$(WebAppName-prod)'
-              package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/Tailspin.SpaceGame.Web.zip'
+# - stage: 'Dev'
+#   displayName: 'Dev'
+#   dependsOn: Build
+#   condition: |
+#     and
+#     (
+#       succeeded(),
+#       eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
+#     )
+#   jobs:
+#   - deployment: Deploy
+#     pool:
+#       vmImage: 'ubuntu-20.04'
+#     environment: dev
+#     variables:
+#     - group: Release
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - download: current
+#             artifact: drop
+#           - task: AzureWebApp@1
+#             displayName: 'Azure App Service Deploy: website'
+#             inputs:
+#               azureSubscription: 'Resource Manager - Tailspin - Space Game'
+#               appName: '$(WebAppName-dev)'
+#               package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/Tailspin.SpaceGame.Web.zip'
+
+# - stage: 'Test'
+#   displayName: 'Test'
+#   dependsOn: Dev
+#   #condition: eq(variables['Build.Reason'], 'Schedule')
+#   jobs:
+#   - deployment: Deploy
+#     pool:
+#       vmImage: 'ubuntu-20.04'
+#     environment: test
+#     variables:
+#     - group: 'Release'
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - download: current
+#             artifact: drop
+#           - task: AzureWebApp@1
+#             displayName: 'Azure App Service Deploy: website'
+#             inputs:
+#               azureSubscription: 'Resource Manager - Tailspin - Space Game'
+#               appName: '$(WebAppName-test)'
+#               package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/Tailspin.SpaceGame.Web.zip'
+
+# - stage: 'Staging'
+#   displayName: 'Staging'
+#   dependsOn: Test
+#   jobs:
+#   - deployment: Deploy
+#     pool:
+#       vmImage: 'ubuntu-20.04'
+#     environment: staging
+#     variables:
+#     - group: 'Release'
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - download: current
+#             artifact: drop
+#           - task: AzureWebApp@1
+#             displayName: 'Azure App Service Deploy: website'
+#             inputs:
+#               azureSubscription: 'Resource Manager - Tailspin - Space Game'
+#               appName: '$(WebAppName-staging)'
+#               package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/Tailspin.SpaceGame.Web.zip'
+
+# - stage: 'Prod'
+#   displayName: 'Prod'
+#   dependsOn: Staging
+#   jobs:
+#   - deployment: Deploy
+#     pool:
+#       vmImage: 'ubuntu-20.04'
+#     environment: prod
+#     variables:
+#     - group: 'Release'
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - download: current
+#             artifact: drop
+#           - task: AzureWebApp@1
+#             displayName: 'Azure App Service Deploy: website'
+#             inputs:
+#               azureSubscription: 'Resource Manager - Tailspin - Space Game'
+#               appName: '$(WebAppName-prod)'
+#               package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/Tailspin.SpaceGame.Web.zip'
