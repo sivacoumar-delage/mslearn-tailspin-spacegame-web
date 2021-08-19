@@ -128,7 +128,7 @@ stages:
 
 - stage: 'Prod'
   displayName: 'Prod'
-  dependsOn: 'Test'
+  dependsOn: 'Staging'
   jobs:
   - template: templates/deploy.yml
     parameters:
