@@ -92,32 +92,48 @@ stages:
       displayName: 'Publish Artifact: drop'
       condition: succeeded()
 
-- template: templates/deploy.yml
-  parameters:
-    buildConfiguration: 'Release'  
-    environmentName: 'dev'
-    stageName: 'Dev'
-    stageCondition: |
-      and
-      (
-        succeeded(),
-        eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
-      )
-    previousStage: 'Build'
+- stage: 'Dev'
+  displayName: 'Dev'
+  dependsOn: 'Build'
+  condition: |
+    and
+    (
+      succeeded(),
+      eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
+    )
+  jobs:
+  - template: templates/deploy.yml
+    parameters:
+      buildConfiguration: 'Release'  
+      environmentName: 'dev'
 
-- template: templates/deploy.yml
-  parameters:
-    buildConfiguration: 'Release'  
-    environmentName: 'test'
-    stageName: 'Test'
-    previousStage: 'Dev'
+- stage: 'Test'
+  displayName: 'Test'
+  dependsOn: 'Dev'
+  #condition: eq(variables['Build.Reason'], 'Schedule')
+  jobs:
+  - template: templates/deploy.yml
+    parameters:
+      buildConfiguration: 'Release'  
+      environmentName: 'test'
 
-- template: templates/deploy.yml
-  parameters:
-    buildConfiguration: 'Release'  
-    environmentName: 'staging'
-    stageName: 'Staging'
-    previousStage: 'Test'
+- stage: 'Staging'
+  displayName: 'Staging'
+  dependsOn: 'Test'
+  jobs:
+  - template: templates/deploy.yml
+    parameters:
+      buildConfiguration: 'Release'  
+      environmentName: 'staging'
+
+- stage: 'Prod'
+  displayName: 'Prod'
+  dependsOn: 'Test'
+  jobs:
+  - template: templates/deploy.yml
+    parameters:
+      buildConfiguration: 'Release'  
+      environmentName: 'prod'
 
 - template: templates/deploy.yml
   parameters:
