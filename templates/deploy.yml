@@ -2,7 +2,7 @@ parameters:
   buildConfiguration: 'Release'
   environmentName: 'dev'
   stageName: 'Dev'
-  stageCondition: succeeded()
+  stageCondition: 'succeeded()'
   previousStage: 'Build'
 
 stages:
