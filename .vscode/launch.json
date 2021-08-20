@@ -19,9 +19,13 @@
                 "action": "openExternally",
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
             },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
+          "env": {
+            "ASPNETCORE_ENVIRONMENT": "Development",
+            "ChromeWebDriver": "C:\\SeleniumWebDriver",
+            "EdgeWebDriver": "C:\\SeleniumWebDriver",
+            "GeckoWebDriver": "C:\\SeleniumWebDriver",
+            "SITE_URL": "https://tailspin-space-game-web-sde-dev.azurewebsites.net/"
+          },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
             }

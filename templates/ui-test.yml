@@ -1,0 +1,32 @@
+parameters:
+  buildConfiguration: 'Release'
+
+steps:
+- task: UseDotNet@2
+  displayName: 'Use .NET SDK $(dotnetSdkVersion)'
+  inputs:
+    version: '$(dotnetSdkVersion)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build the project - ${{ parameters.buildConfiguration }}'
+  inputs:
+    command: 'build'
+    arguments: '--configuration ${{ parameters.buildConfiguration }}'
+    projects: '$(System.DefaultWorkingDirectory)/**/*UiTests.csproj'
+
+- script: 'copy C:\SeleniumWebDrivers\EdgeDriver\msedgedriver.exe C:\SeleniumWebDrivers\EdgeDriver\MicrosoftWebDriver.exe'
+  displayName: "Configure Edge driver"
+
+- script: 'dir C:\SeleniumWebDrivers /S'
+  displayName: 'List files in C:\SeleniumWebDrivers'
+
+- script: 'dir $(System.DefaultWorkingDirectory) /S'
+  displayName: 'List files in $(System.DefaultWorkingDirectory)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Run unit tests - ${{ parameters.buildConfiguration }}'
+  inputs:
+    command: 'test'
+    arguments: '--no-build --configuration ${{ parameters.buildConfiguration }}'
+    publishTestResults: true
+    projects: '$(System.DefaultWorkingDirectory)/**/*UiTests.csproj'

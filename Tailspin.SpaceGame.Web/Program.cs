@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace TailSpin.SpaceGame.Web
 {
@@ -12,6 +13,12 @@ namespace TailSpin.SpaceGame.Web
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+                .UseStartup<Startup>()
+            .ConfigureAppConfiguration(configurationBuilder =>
+            {
+                IConfiguration config = new ConfigurationBuilder()
+                .AddEnvironmentVariables()
+                .Build();
+            });
     }
 }
