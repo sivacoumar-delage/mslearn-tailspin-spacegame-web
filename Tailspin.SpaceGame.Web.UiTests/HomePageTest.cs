@@ -37,7 +37,10 @@ namespace Tailspin.SpaceGame.Web.UiTests
         private void CloseWebDriver()
         {
             if (driver != null)
+            {
                 driver.Close();
+                driver.Dispose();
+            }
         }
 
         private void SetupWebDriver(string browser)
