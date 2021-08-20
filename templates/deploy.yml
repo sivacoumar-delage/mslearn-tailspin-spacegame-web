@@ -4,6 +4,7 @@ parameters:
 
 
 jobs:
+
 - deployment: Deploy
   pool:
     vmImage: 'ubuntu-20.04'
@@ -22,3 +23,14 @@ jobs:
             azureSubscription: 'Resource Manager - Tailspin - Space Game'
             appName: '$(WebAppName-${{ parameters.environmentName }})'
             package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/Tailspin.SpaceGame.Web.zip'
+
+- job: RunSmokeTests
+  dependsOn: Deploy
+  displayName: 'Run smoke test'
+  pool:
+    vmImage: 'ubuntu-20.04'
+  variables:
+  - group: 'Release'
+  steps:
+  - script: 'wget -q https://$(WebAppName-${{ parameters.environmentName }}).azurewebsites.net'
+    displayName: 'Check home page'

@@ -21,6 +21,7 @@ pool:
   - npm
 
 stages:
+
 - stage: 'Build'
   displayName: 'Build'
   jobs: 
@@ -71,10 +72,6 @@ stages:
         restoreSolution: '**/*.sln'
         feedsToUse: 'select'
         vstsFeed: '$(System.TeamProject)/Tailspin.SpaceGame.Web.Models'
-
-    # - template: templates/build.yml
-    #   parameters:
-    #     buildConfiguration: 'Debug'
 
     - template: templates/build.yml
       parameters:
@@ -136,6 +133,17 @@ stages:
     parameters:
       buildConfiguration: 'Release'  
       environmentName: 'staging'
+  - job: RunLoadTests
+    dependsOn: RunSmokeTests
+    displayName: 'Run load tests'
+    pool:
+      vmImage: 'ubuntu-20.04'
+    variables:
+    - group: 'Release'
+    steps:
+    - template: templates/load-test.yml
+      parameters:
+        buildConfiguration: 'Release'
 
 - stage: 'Prod'
   displayName: 'Prod'
