@@ -128,12 +128,12 @@ stages:
   displayName: 'Staging'
   # dependsOn: 'Test'
   jobs:
-  # - template: templates/deploy.yml
-  #   parameters:
-  #     buildConfiguration: 'Release'  
-  #     environmentName: 'staging'
+  - template: templates/deploy.yml
+    parameters:
+      buildConfiguration: 'Release'  
+      environmentName: 'staging'
   - job: RunUiTests
-    # dependsOn: Deploy
+    dependsOn: Deploy
     displayName: 'Run load tests'
     pool:
       vmImage: 'ubuntu-20.04'
