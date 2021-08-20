@@ -9,7 +9,7 @@ using OpenQA.Selenium.Support.UI;
 namespace Tailspin.SpaceGame.Web.UiTests
 {
     [TestFixture("Chrome")]
-    [TestFixture("Firefox")]
+    //[TestFixture("Firefox")]
     [TestFixture("Edge")]
     public class HomePageTest
     {
