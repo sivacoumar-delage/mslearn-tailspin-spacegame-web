@@ -20,129 +20,136 @@ pool:
   demands:
   - npm
 
-stages:
-- stage: 'Build'
-  displayName: 'Build'
-  jobs: 
-  - job: 'Build'
-    displayName: 'Build job'
-    pool:
-      vmImage: 'ubuntu-20.04'
-      demands:
-      - npm
+# stages:
+# - stage: 'Build'
+#   displayName: 'Build'
+#   jobs: 
+#   - job: 'Build'
+#     displayName: 'Build job'
+#     pool:
+#       vmImage: 'ubuntu-20.04'
+#       demands:
+#       - npm
 
-    variables:
-      wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
-      dotnetSdkVersion: '5.x'
-      versionNumberMajor: '1'
-      versionNumberMinor: '0'
-      versionNumberRevision: '$(Build.BuildId)'
-      versionNumber: '$(versionNumberMajor).$(versionNumberMinor).$(versionNumberRevision)'
+#     variables:
+#       wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
+#       dotnetSdkVersion: '5.x'
+#       versionNumberMajor: '1'
+#       versionNumberMinor: '0'
+#       versionNumberRevision: '$(Build.BuildId)'
+#       versionNumber: '$(versionNumberMajor).$(versionNumberMinor).$(versionNumberRevision)'
 
-    steps:
-    - task: UseDotNet@2
-      displayName: 'Use .NET SDK $(dotnetSdkVersion)'
-      inputs:
-        version: '$(dotnetSdkVersion)'
+#     steps:
+#     - task: UseDotNet@2
+#       displayName: 'Use .NET SDK $(dotnetSdkVersion)'
+#       inputs:
+#         version: '$(dotnetSdkVersion)'
 
-    - task: NuGetToolInstaller@0
-      inputs:
-        versionSpec: '5.9.1'
+#     - task: NuGetToolInstaller@0
+#       inputs:
+#         versionSpec: '5.9.1'
 
-    - task: Npm@1
-      displayName: 'Run npm install'
-      inputs:
-        verbose: false
+#     - task: Npm@1
+#       displayName: 'Run npm install'
+#       inputs:
+#         verbose: false
 
-    - script: './node_modules/.bin/node-sass $(wwwrootDir) --output $(wwwrootDir)'
-      displayName: 'Compile Sass assets'
+#     - script: './node_modules/.bin/node-sass $(wwwrootDir) --output $(wwwrootDir)'
+#       displayName: 'Compile Sass assets'
 
-    - task: gulp@1
-      displayName: 'Run gulp tasks'
+#     - task: gulp@1
+#       displayName: 'Run gulp tasks'
 
-    - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber), $(versionNumberMajor).$(versionNumberMinor).$(versionNumberRevision), $(versionNumber)" > buildinfo.txt'
-      displayName: 'Write build info'
-      workingDirectory: $(wwwrootDir)
+#     - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber), $(versionNumberMajor).$(versionNumberMinor).$(versionNumberRevision), $(versionNumber)" > buildinfo.txt'
+#       displayName: 'Write build info'
+#       workingDirectory: $(wwwrootDir)
 
-    - task: NuGetCommand@2
-      displayName: 'Restore project dependencies'
-      inputs:
-        command: 'restore'
-        restoreSolution: '**/*.sln'
-        feedsToUse: 'select'
-        vstsFeed: '$(System.TeamProject)/Tailspin.SpaceGame.Web.Models'
+#     - task: NuGetCommand@2
+#       displayName: 'Restore project dependencies'
+#       inputs:
+#         command: 'restore'
+#         restoreSolution: '**/*.sln'
+#         feedsToUse: 'select'
+#         vstsFeed: '$(System.TeamProject)/Tailspin.SpaceGame.Web.Models'
 
-    # - template: templates/build.yml
-    #   parameters:
-    #     buildConfiguration: 'Debug'
+#     - template: templates/build.yml
+#       parameters:
+#         buildConfiguration: 'Release'
 
-    - template: templates/build.yml
-      parameters:
-        buildConfiguration: 'Release'
+#     - template: templates/unit-test.yml
+#       parameters:
+#         buildConfiguration: 'Release'
 
-    - template: templates/unit-test.yml
-      parameters:
-        buildConfiguration: 'Release'
+#     - task: PublishBuildArtifacts@1
+#       displayName: 'Publish Artifact: drop'
+#       condition: succeeded()
 
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publish Artifact: drop'
-      condition: succeeded()
+# - stage: 'Dev'
+#   displayName: 'Dev'
+#   dependsOn: 'Build'
+#   # condition: |
+#   #   and
+#   #   (
+#   #     succeeded(),
+#   #     or
+#   #     (
+#   #       eq(variables['Build.SourceBranchName'], variables['mainBranchName']),
+#   #       eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
+#   #     )
+#   #   )
+#   jobs:
+#   - template: templates/deploy.yml
+#     parameters:
+#       buildConfiguration: 'Release'  
+#       environmentName: 'dev'
 
-- stage: 'Dev'
-  displayName: 'Dev'
-  dependsOn: 'Build'
-  # condition: |
-  #   and
-  #   (
-  #     succeeded(),
-  #     or
-  #     (
-  #       eq(variables['Build.SourceBranchName'], variables['mainBranchName']),
-  #       eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
-  #     )
-  #   )
-  jobs:
-  - template: templates/deploy.yml
-    parameters:
-      buildConfiguration: 'Release'  
-      environmentName: 'dev'
-
-- stage: 'Test'
-  displayName: 'Test'
-  dependsOn: 'Dev'
-  #condition: eq(variables['Build.Reason'], 'Schedule')
-  jobs:
-  - template: templates/deploy.yml
-    parameters:
-      buildConfiguration: 'Release'  
-      environmentName: 'test'
-  - job: RunUiTests
-    dependsOn: Deploy
-    displayName: 'Run UI tests'
-    pool:
-      vmImage: 'windows-2019'
-    variables:
-    - group: 'Release'
-    steps:
-    - template: templates/ui-test.yml
-      parameters:
-        buildConfiguration: 'Release'
+# - stage: 'Test'
+#   displayName: 'Test'
+#   dependsOn: 'Dev'
+#   #condition: eq(variables['Build.Reason'], 'Schedule')
+#   jobs:
+#   - template: templates/deploy.yml
+#     parameters:
+#       buildConfiguration: 'Release'  
+#       environmentName: 'test'
+#   - job: RunUiTests
+#     dependsOn: Deploy
+#     displayName: 'Run UI tests'
+#     pool:
+#       vmImage: 'windows-2019'
+#     variables:
+#     - group: 'Release'
+#     steps:
+#     - template: templates/ui-test.yml
+#       parameters:
+#         buildConfiguration: 'Release'
 
 - stage: 'Staging'
   displayName: 'Staging'
-  dependsOn: 'Test'
+  # dependsOn: 'Test'
   jobs:
-  - template: templates/deploy.yml
-    parameters:
-      buildConfiguration: 'Release'  
-      environmentName: 'staging'
+  # - template: templates/deploy.yml
+  #   parameters:
+  #     buildConfiguration: 'Release'  
+  #     environmentName: 'staging'
+  - job: RunUiTests
+    # dependsOn: Deploy
+    displayName: 'Run load tests'
+    pool:
+      vmImage: 'ubuntu-20.04'
+    variables:
+    - group: 'Release'
+    steps:
+    - template: templates/load-test.yml
+      parameters:
+        buildConfiguration: 'Release'
 
-- stage: 'Prod'
-  displayName: 'Prod'
-  dependsOn: 'Staging'
-  jobs:
-  - template: templates/deploy.yml
-    parameters:
-      buildConfiguration: 'Release'  
-      environmentName: 'prod'
+# - stage: 'Prod'
+#   displayName: 'Prod'
+#   dependsOn: 'Staging'
+#   jobs:
+#   - template: templates/deploy.yml
+#     parameters:
+#       buildConfiguration: 'Release'  
+#       environmentName: 'prod'
 
