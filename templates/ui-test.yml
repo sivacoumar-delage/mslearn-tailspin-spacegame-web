@@ -14,6 +14,14 @@ steps:
     arguments: '--configuration ${{ parameters.buildConfiguration }}'
     projects: '$(System.DefaultWorkingDirectory)/**/*UiTests.csproj'
 
+- script: 'dir $(System.DefaultWorkingDirectory) /S'
+  displayName: 'List files in $(System.DefaultWorkingDirectory)'
+  workingDirectory: $(wwwrootDir)
+
+- script: 'dir C:\SeleniumWebDrivers /S'
+  displayName: 'List files in C:\SeleniumWebDrivers'
+  workingDirectory: $(wwwrootDir)
+
 - task: DotNetCoreCLI@2
   displayName: 'Run unit tests - ${{ parameters.buildConfiguration }}'
   inputs:

@@ -94,24 +94,24 @@ stages:
       displayName: 'Publish Artifact: drop'
       condition: succeeded()
 
-- stage: 'Dev'
-  displayName: 'Dev'
-  dependsOn: 'Build'
-  # condition: |
-  #   and
-  #   (
-  #     succeeded(),
-  #     or
-  #     (
-  #       eq(variables['Build.SourceBranchName'], variables['mainBranchName']),
-  #       eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
-  #     )
-  #   )
-  jobs:
-  - template: templates/deploy.yml
-    parameters:
-      buildConfiguration: 'Release'  
-      environmentName: 'dev'
+# - stage: 'Dev'
+#   displayName: 'Dev'
+#   dependsOn: 'Build'
+#   # condition: |
+#   #   and
+#   #   (
+#   #     succeeded(),
+#   #     or
+#   #     (
+#   #       eq(variables['Build.SourceBranchName'], variables['mainBranchName']),
+#   #       eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
+#   #     )
+#   #   )
+#   jobs:
+#   - template: templates/deploy.yml
+#     parameters:
+#       buildConfiguration: 'Release'  
+#       environmentName: 'dev'
 
 - stage: 'Test'
   displayName: 'Test'
