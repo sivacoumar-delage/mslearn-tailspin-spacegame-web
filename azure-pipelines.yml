@@ -123,7 +123,7 @@ stages:
   #     buildConfiguration: 'Release'  
   #     environmentName: 'test'
   - job: RunUiTests
-    dependsOn: Deploy
+    # dependsOn: Deploy
     displayName: 'Run UI tests'
     pool:
       vmImage: 'windows-2019'
