@@ -20,7 +20,7 @@ pool:
   demands:
   - npm
 
-# stages:
+stages:
 # - stage: 'Build'
 #   displayName: 'Build'
 #   jobs: 
