@@ -21,68 +21,69 @@ pool:
   - npm
 
 stages:
-# - stage: 'Build'
-#   displayName: 'Build'
-#   jobs: 
-#   - job: 'Build'
-#     displayName: 'Build job'
-#     pool:
-#       vmImage: 'ubuntu-20.04'
-#       demands:
-#       - npm
 
-#     variables:
-#       wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
-#       dotnetSdkVersion: '5.x'
-#       versionNumberMajor: '1'
-#       versionNumberMinor: '0'
-#       versionNumberRevision: '$(Build.BuildId)'
-#       versionNumber: '$(versionNumberMajor).$(versionNumberMinor).$(versionNumberRevision)'
+- stage: 'Build'
+  displayName: 'Build'
+  jobs: 
+  - job: 'Build'
+    displayName: 'Build job'
+    pool:
+      vmImage: 'ubuntu-20.04'
+      demands:
+      - npm
 
-#     steps:
-#     - task: UseDotNet@2
-#       displayName: 'Use .NET SDK $(dotnetSdkVersion)'
-#       inputs:
-#         version: '$(dotnetSdkVersion)'
+    variables:
+      wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
+      dotnetSdkVersion: '5.x'
+      versionNumberMajor: '1'
+      versionNumberMinor: '0'
+      versionNumberRevision: '$(Build.BuildId)'
+      versionNumber: '$(versionNumberMajor).$(versionNumberMinor).$(versionNumberRevision)'
 
-#     - task: NuGetToolInstaller@0
-#       inputs:
-#         versionSpec: '5.9.1'
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Use .NET SDK $(dotnetSdkVersion)'
+      inputs:
+        version: '$(dotnetSdkVersion)'
 
-#     - task: Npm@1
-#       displayName: 'Run npm install'
-#       inputs:
-#         verbose: false
+    - task: NuGetToolInstaller@0
+      inputs:
+        versionSpec: '5.9.1'
 
-#     - script: './node_modules/.bin/node-sass $(wwwrootDir) --output $(wwwrootDir)'
-#       displayName: 'Compile Sass assets'
+    - task: Npm@1
+      displayName: 'Run npm install'
+      inputs:
+        verbose: false
 
-#     - task: gulp@1
-#       displayName: 'Run gulp tasks'
+    - script: './node_modules/.bin/node-sass $(wwwrootDir) --output $(wwwrootDir)'
+      displayName: 'Compile Sass assets'
 
-#     - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber), $(versionNumberMajor).$(versionNumberMinor).$(versionNumberRevision), $(versionNumber)" > buildinfo.txt'
-#       displayName: 'Write build info'
-#       workingDirectory: $(wwwrootDir)
+    - task: gulp@1
+      displayName: 'Run gulp tasks'
 
-#     - task: NuGetCommand@2
-#       displayName: 'Restore project dependencies'
-#       inputs:
-#         command: 'restore'
-#         restoreSolution: '**/*.sln'
-#         feedsToUse: 'select'
-#         vstsFeed: '$(System.TeamProject)/Tailspin.SpaceGame.Web.Models'
+    - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber), $(versionNumberMajor).$(versionNumberMinor).$(versionNumberRevision), $(versionNumber)" > buildinfo.txt'
+      displayName: 'Write build info'
+      workingDirectory: $(wwwrootDir)
 
-#     - template: templates/build.yml
-#       parameters:
-#         buildConfiguration: 'Release'
+    - task: NuGetCommand@2
+      displayName: 'Restore project dependencies'
+      inputs:
+        command: 'restore'
+        restoreSolution: '**/*.sln'
+        feedsToUse: 'select'
+        vstsFeed: '$(System.TeamProject)/Tailspin.SpaceGame.Web.Models'
 
-#     - template: templates/unit-test.yml
-#       parameters:
-#         buildConfiguration: 'Release'
+    - template: templates/build.yml
+      parameters:
+        buildConfiguration: 'Release'
 
-#     - task: PublishBuildArtifacts@1
-#       displayName: 'Publish Artifact: drop'
-#       condition: succeeded()
+    - template: templates/unit-test.yml
+      parameters:
+        buildConfiguration: 'Release'
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: drop'
+      condition: succeeded()
 
 # - stage: 'Dev'
 #   displayName: 'Dev'
@@ -126,6 +127,7 @@ stages:
 
 - stage: 'Staging'
   displayName: 'Staging'
+  dependsOn: 'Build'
   # dependsOn: 'Test'
   jobs:
   - template: templates/deploy.yml
