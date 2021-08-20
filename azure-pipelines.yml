@@ -134,8 +134,8 @@ stages:
     parameters:
       buildConfiguration: 'Release'  
       environmentName: 'staging'
-  - job: RunUiTests
-    dependsOn: Deploy
+  - job: RunLoadTests
+    dependsOn: RunSmokeTests
     displayName: 'Run load tests'
     pool:
       vmImage: 'ubuntu-20.04'
