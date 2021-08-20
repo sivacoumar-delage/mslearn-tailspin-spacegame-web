@@ -72,12 +72,6 @@ stages:
         feedsToUse: 'select'
         vstsFeed: '$(System.TeamProject)/Tailspin.SpaceGame.Web.Models'
 
-    # - task: DotNetCoreCLI@2
-    #   displayName: 'Restore project dependencies'
-    #   inputs:
-    #     command: 'restore'
-    #     projects: '**/*.csproj'
-
     # - template: templates/build.yml
     #   parameters:
     #     buildConfiguration: 'Debug'
@@ -86,44 +80,44 @@ stages:
       parameters:
         buildConfiguration: 'Release'
 
-    # - template: templates/unit-test.yml
-    #   parameters:
-    #     buildConfiguration: 'Release'
+    - template: templates/unit-test.yml
+      parameters:
+        buildConfiguration: 'Release'
 
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact: drop'
       condition: succeeded()
 
-# - stage: 'Dev'
-#   displayName: 'Dev'
-#   dependsOn: 'Build'
-#   # condition: |
-#   #   and
-#   #   (
-#   #     succeeded(),
-#   #     or
-#   #     (
-#   #       eq(variables['Build.SourceBranchName'], variables['mainBranchName']),
-#   #       eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
-#   #     )
-#   #   )
-#   jobs:
-#   - template: templates/deploy.yml
-#     parameters:
-#       buildConfiguration: 'Release'  
-#       environmentName: 'dev'
+- stage: 'Dev'
+  displayName: 'Dev'
+  dependsOn: 'Build'
+  # condition: |
+  #   and
+  #   (
+  #     succeeded(),
+  #     or
+  #     (
+  #       eq(variables['Build.SourceBranchName'], variables['mainBranchName']),
+  #       eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
+  #     )
+  #   )
+  jobs:
+  - template: templates/deploy.yml
+    parameters:
+      buildConfiguration: 'Release'  
+      environmentName: 'dev'
 
 - stage: 'Test'
   displayName: 'Test'
-  dependsOn: 'Build'
+  dependsOn: 'Dev'
   #condition: eq(variables['Build.Reason'], 'Schedule')
   jobs:
-  # - template: templates/deploy.yml
-  #   parameters:
-  #     buildConfiguration: 'Release'  
-  #     environmentName: 'test'
+  - template: templates/deploy.yml
+    parameters:
+      buildConfiguration: 'Release'  
+      environmentName: 'test'
   - job: RunUiTests
-    # dependsOn: Deploy
+    dependsOn: Deploy
     displayName: 'Run UI tests'
     pool:
       vmImage: 'windows-2019'
