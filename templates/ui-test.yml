@@ -14,6 +14,9 @@ steps:
     arguments: '--configuration ${{ parameters.buildConfiguration }}'
     projects: '$(System.DefaultWorkingDirectory)/**/*UiTests.csproj'
 
+- script: "copy C:\SeleniumWebDrivers\EdgeDriver\msedgedriver.exe C:\SeleniumWebDrivers\EdgeDriver\MicrosoftWebDriver.exe"
+  displayName: "Configure Edge driver"
+
 - script: 'dir C:\SeleniumWebDrivers /S'
   displayName: 'List files in C:\SeleniumWebDrivers'
 
