@@ -85,50 +85,49 @@ stages:
       displayName: 'Publish Artifact: drop'
       condition: succeeded()
 
-# - stage: 'Dev'
-#   displayName: 'Dev'
-#   dependsOn: 'Build'
-#   # condition: |
-#   #   and
-#   #   (
-#   #     succeeded(),
-#   #     or
-#   #     (
-#   #       eq(variables['Build.SourceBranchName'], variables['mainBranchName']),
-#   #       eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
-#   #     )
-#   #   )
-#   jobs:
-#   - template: templates/deploy.yml
-#     parameters:
-#       buildConfiguration: 'Release'  
-#       environmentName: 'dev'
+- stage: 'Dev'
+  displayName: 'Dev'
+  dependsOn: 'Build'
+  # condition: |
+  #   and
+  #   (
+  #     succeeded(),
+  #     or
+  #     (
+  #       eq(variables['Build.SourceBranchName'], variables['mainBranchName']),
+  #       eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
+  #     )
+  #   )
+  jobs:
+  - template: templates/deploy.yml
+    parameters:
+      buildConfiguration: 'Release'  
+      environmentName: 'dev'
 
-# - stage: 'Test'
-#   displayName: 'Test'
-#   dependsOn: 'Dev'
-#   #condition: eq(variables['Build.Reason'], 'Schedule')
-#   jobs:
-#   - template: templates/deploy.yml
-#     parameters:
-#       buildConfiguration: 'Release'  
-#       environmentName: 'test'
-#   - job: RunUiTests
-#     dependsOn: Deploy
-#     displayName: 'Run UI tests'
-#     pool:
-#       vmImage: 'windows-2019'
-#     variables:
-#     - group: 'Release'
-#     steps:
-#     - template: templates/ui-test.yml
-#       parameters:
-#         buildConfiguration: 'Release'
+- stage: 'Test'
+  displayName: 'Test'
+  dependsOn: 'Dev'
+  #condition: eq(variables['Build.Reason'], 'Schedule')
+  jobs:
+  - template: templates/deploy.yml
+    parameters:
+      buildConfiguration: 'Release'  
+      environmentName: 'test'
+  - job: RunUiTests
+    dependsOn: Deploy
+    displayName: 'Run UI tests'
+    pool:
+      vmImage: 'windows-2019'
+    variables:
+    - group: 'Release'
+    steps:
+    - template: templates/ui-test.yml
+      parameters:
+        buildConfiguration: 'Release'
 
 - stage: 'Staging'
   displayName: 'Staging'
-  dependsOn: 'Build'
-  # dependsOn: 'Test'
+  dependsOn: 'Test'
   jobs:
   - template: templates/deploy.yml
     parameters:
@@ -146,12 +145,12 @@ stages:
       parameters:
         buildConfiguration: 'Release'
 
-# - stage: 'Prod'
-#   displayName: 'Prod'
-#   dependsOn: 'Staging'
-#   jobs:
-#   - template: templates/deploy.yml
-#     parameters:
-#       buildConfiguration: 'Release'  
-#       environmentName: 'prod'
+- stage: 'Prod'
+  displayName: 'Prod'
+  dependsOn: 'Staging'
+  jobs:
+  - template: templates/deploy.yml
+    parameters:
+      buildConfiguration: 'Release'  
+      environmentName: 'prod'
 
