@@ -10,6 +10,13 @@ steps:
     arguments: 'restore'
 
 - task: DotNetCoreCLI@2
+  displayName: 'Build the project - ${{ parameters.buildConfiguration }}'
+  inputs:
+    command: 'build'
+    arguments: '--no-restore --configuration ${{ parameters.buildConfiguration }} -p:Version=$(versionNumber)'
+    projects: '**/*.Tests.csproj'
+
+- task: DotNetCoreCLI@2
   displayName: 'Run unit tests - ${{ parameters.buildConfiguration }}'
   inputs:
     command: 'test'

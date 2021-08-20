@@ -7,7 +7,7 @@ steps:
   inputs:
     command: 'build'
     arguments: '--no-restore --configuration ${{ parameters.buildConfiguration }} -p:Version=$(versionNumber)'
-    projects: '**/*.csproj'
+    projects: '**/Tailspin.SpaceGame.Web.csproj'
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish the project - ${{ parameters.buildConfiguration }}'

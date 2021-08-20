@@ -6,12 +6,14 @@ steps:
   displayName: 'Use .NET SDK $(dotnetSdkVersion)'
   inputs:
     version: '$(dotnetSdkVersion)'
+
 - task: DotNetCoreCLI@2
   displayName: 'Build the project - ${{ parameters.buildConfiguration }}'
   inputs:
     command: 'build'
     arguments: '--configuration ${{ parameters.buildConfiguration }}'
     projects: '$(System.DefaultWorkingDirectory)/**/*UiTests.csproj'
+
 - task: DotNetCoreCLI@2
   displayName: 'Run unit tests - ${{ parameters.buildConfiguration }}'
   inputs:
