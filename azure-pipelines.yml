@@ -129,10 +129,10 @@ stages:
       vmImage: 'windows-2019'
     variables:
     - group: 'Release'
-    steps: 
-  - template: templates/ui-test.yml
-    parameters:
-      buildConfiguration: 'Release'  
+    steps:
+    - template: templates/ui-test.yml
+      parameters:
+        buildConfiguration: 'Release'
 
 - stage: 'Staging'
   displayName: 'Staging'
