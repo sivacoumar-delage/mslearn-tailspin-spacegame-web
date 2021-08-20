@@ -28,6 +28,18 @@ namespace Tailspin.SpaceGame.Web.UiTests
             NavigateToWebSite();
         }
 
+        [OneTimeTearDown]
+        public void TearDown()
+        {
+            CloseWebDriver();
+        }
+
+        private void CloseWebDriver()
+        {
+            if (driver != null)
+                driver.Close();
+        }
+
         private void SetupWebDriver(string browser)
         {
             var temp = Environment.GetEnvironmentVariable("TEMP");
