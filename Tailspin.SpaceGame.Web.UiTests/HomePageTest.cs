@@ -30,6 +30,12 @@ namespace Tailspin.SpaceGame.Web.UiTests
 
         private void SetupWebDriver(string browser)
         {
+            var temp = Environment.GetEnvironmentVariable("TEMP");
+            var onedrive = Environment.GetEnvironmentVariable("OneDrive");
+            var driver1 = Environment.GetEnvironmentVariable("ChromeWebDriver");
+            var driver2 = Environment.GetEnvironmentVariable("GeckoWebDriver");
+            var driver3 = Environment.GetEnvironmentVariable("EdgeWebDriver");
+
             switch (browser)
             {
                 case "Chrome":
